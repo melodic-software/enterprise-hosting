@@ -1,0 +1,39 @@
+# determines when the pipeline should run
+# a build will trigger when a code change is made under the "src" directory in the main branch or a feature branch
+trigger:
+  branches:
+    include:
+      - main
+      - feature/*
+  paths:
+    include:
+      - src
+      - tests
+
+resources:
+  repositories:
+    - repository: templates # This is the alias used later in the 'extends' section.
+      type: github # Specifies that we are using a GitHub repository.
+      name: melodic-software/devops-pipeline-templates # Replace with your GitHub organization and repository name.
+      endpoint: github-melodic-software # The service connection name created in Azure DevOps to connect to GitHub.
+      ref: refs/heads/main # Optional: Specifies the default branch to use. You can also pin to a tag or commit.
+
+#specifies possible inputs for the pipeline
+parameters:
+  - name: releaseNotes
+    displayName: Release Notes
+    type: string
+    default: N/A
+
+# defines where the pipeline should run
+# a parameter expression cannot be used here, but a variable reference can
+pool:
+  name: Azure Pipelines
+
+extends:
+  template: 'src/entry-points/create-nuget-package.yml@templates'
+  parameters:
+    projectName: Enterprise.Hosting
+    targetFramework: DotNet
+    releaseNotes: ${{ parameters.releaseNotes }}
+    testMode: false
