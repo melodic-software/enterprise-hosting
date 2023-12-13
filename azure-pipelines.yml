@@ -28,7 +28,7 @@ parameters:
 # defines where the pipeline should run
 # a parameter expression cannot be used here, but a variable reference can
 pool:
-  name: KYLE-MELODIC
+  name: Azure Pipelines
 
 extends:
   template: 'src/entry-points/create-nuget-package.yml@templates'
